@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.okcoin.commons.support.consts.UserAuthConsts;
+import com.easytoolsoft.commons.support.consts.UserAuthConsts;
 
 /**
  * 绑定当前登录的用户

@@ -14,7 +14,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
  * @date 2017-05-08
  **/
 
-public class MyResourceBundleMessageSource extends ResourceBundleMessageSource {
+public class CustomResourceBundleMessageSource extends ResourceBundleMessageSource {
     public Map<String, String> getMessages(Locale locale, String... codePrefixes) {
         Map<String, String> messagesMap = new HashMap<>(128);
         Set<String> basenames = this.getBasenameSet();

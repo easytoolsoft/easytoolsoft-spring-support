@@ -116,6 +116,6 @@ public class LocaleUtils {
      */
     public static Map<String, String> getMessages(String... codePrefixes) {
         final Locale locale = LocaleContextHolder.getLocale();
-        return ((MyResourceBundleMessageSource)messageSource).getMessages(locale, codePrefixes);
+        return ((CustomResourceBundleMessageSource)messageSource).getMessages(locale, codePrefixes);
     }
 }

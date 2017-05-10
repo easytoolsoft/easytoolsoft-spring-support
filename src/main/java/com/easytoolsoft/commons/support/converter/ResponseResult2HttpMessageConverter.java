@@ -3,6 +3,7 @@ package com.easytoolsoft.commons.support.converter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+import com.easytoolsoft.commons.support.model.ResponseResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.converter.HttpMessageNotWritableException;
@@ -24,7 +25,12 @@ public class ResponseResult2HttpMessageConverter extends MappingJackson2HttpMess
     @Override
     protected void writeInternal(final Object object, final Type type, final HttpOutputMessage outputMessage)
         throws IOException, HttpMessageNotWritableException {
-        super.writeInternal(object, type, outputMessage);
+        if (object instanceof ResponseResult) {
+            super.writeInternal(object, type, outputMessage);
+        } else {
+            ResponseResult<Object> result = new ResponseResult<>(object);
+            super.writeInternal(result, type, outputMessage);
+        }
     }
 
     @Override

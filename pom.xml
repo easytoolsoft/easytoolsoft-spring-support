@@ -13,6 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>some spring and spring boot support classes</description>
+    <url>http://www.easytoolsoft.com/</url>
     <properties>
         <project.github.group>https://github.com/easytoolsoft</project.github.group>
         <project.github.url>https://github.com/easytoolsoft/easytoolsoft-support.git</project.github.url>

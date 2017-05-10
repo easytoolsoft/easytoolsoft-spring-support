@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBody
  * @date 2017-04-26
  **/
 public class ResponseBodyWrapFactoryBean implements InitializingBean {
-    @Value("${my.spring.mvc.responsebody.wrap.basepackage}")
+    @Value("${my.spring.mvc.response-body.wrap.base-package}")
     private String basePackage;
     @Autowired
     private RequestMappingHandlerAdapter adapter;
