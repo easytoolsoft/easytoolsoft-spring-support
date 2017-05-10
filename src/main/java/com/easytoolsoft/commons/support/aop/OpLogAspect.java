@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.easytoolsoft.commons.support.annotation.OpLog;
 import lombok.Data;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -24,7 +23,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  **/
 @Slf4j
 public class OpLogAspect {
-    @Pointcut("@annotation(com.okcoin.commons.support.annotation.OpLog)")
+    @Pointcut("@annotation(com.easytoolsoft.commons.support.annotation.OpLog)")
     public void pointcut() {
     }
 
