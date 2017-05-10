@@ -28,16 +28,31 @@ public class ResponseBodyWrapHandler implements HandlerMethodReturnValueHandler 
     @Override
     public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest) throws Exception {
-        String declaringClazzName = returnType.getMethod().getDeclaringClass().getName();
-        if (StringUtils.startsWith(declaringClazzName, this.basePackage)) {
-            if (returnValue instanceof ResponseResult) {
-                delegate.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
-            } else {
-                ResponseResult<Object> result = new ResponseResult<>(returnValue);
-                delegate.handleReturnValue(result, returnType, mavContainer, webRequest);
-            }
-            return;
+
+        if (this.isWrapReturnValue(returnValue, returnType)) {
+            returnValue = new ResponseResult<>(returnValue);
         }
         delegate.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
+    }
+
+    /**
+     * 如果returnValue为ResponseResult类型
+     * 或 basePackage为空
+     * 或 不是调用类的前辍
+     * 则返回false(不需要包装@ResponseBody返回值)
+     *
+     * @param returnValue 返回值
+     * @param returnType  返回值类型
+     * @return true|false
+     */
+    private boolean isWrapReturnValue(Object returnValue, MethodParameter returnType) {
+        if (returnValue instanceof ResponseResult) {
+            return false;
+        }
+        if (StringUtils.isBlank(this.basePackage)) {
+            return false;
+        }
+        String declaringClazzName = returnType.getMethod().getDeclaringClass().getName();
+        return StringUtils.startsWith(declaringClazzName, this.basePackage);
     }
 }
