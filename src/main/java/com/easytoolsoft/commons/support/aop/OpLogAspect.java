@@ -3,14 +3,13 @@ package com.easytoolsoft.commons.support.aop;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.easytoolsoft.commons.support.annotation.OpLog;
+import lombok.Data;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -25,7 +24,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  **/
 @Slf4j
 public class OpLogAspect {
-    @Pointcut("@annotation(com.easytoolsoft.commons.support.annotation.OpLog)")
+    @Pointcut("@annotation(com.okcoin.commons.support.annotation.OpLog)")
     public void pointcut() {
     }
 
@@ -47,44 +46,46 @@ public class OpLogAspect {
         }
     }
 
-    protected void logEvent(final JoinPoint joinPoint, final String level, String message) {
+    protected void logEvent(final JoinPoint joinPoint, final String level, final String message) {
         try {
-            final HttpServletRequest req =
-                ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-            final Map<String, String> methodInfo = this.getMethodInfo(joinPoint);
-            final String source = MapUtils.getString(methodInfo, "source", "");
-            message = String.format("name:%s;params:%s;desc:%s;detail:%s",
-                MapUtils.getString(methodInfo, "name", ""),
-                MapUtils.getString(methodInfo, "params", ""),
-                MapUtils.getString(methodInfo, "desc", ""), message);
-            log.info("event source:{},level:{},url:{},message:{}",
-                source, level, req.getRequestURL().toString(), message);
+            final EventParameter eventParameter = this.getEventParameter(joinPoint, level, message);
+            this.logEvent(eventParameter);
         } catch (final Exception e) {
             log.error("记录系统事件出错", e);
         }
     }
 
-    protected Map<String, String> getMethodInfo(final JoinPoint joinPoint) throws Exception {
-        final Map<String, String> methodInfoMap = new HashMap<>(3);
+    protected void logEvent(final EventParameter eventParameter) {
+        final HttpServletRequest req =
+            ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+        eventParameter.setUrl(req.getRequestURL().toString());
+        log.info("OpLog:{}", eventParameter.toString());
+    }
+
+    protected EventParameter getEventParameter(final JoinPoint joinPoint, final String level, final String message)
+        throws Exception {
+        final EventParameter eventParameter = new EventParameter();
         final String targetName = joinPoint.getTarget().getClass().getName();
         final String methodName = joinPoint.getSignature().getName();
         final Object[] arguments = joinPoint.getArgs();
         final Class targetClass = Class.forName(targetName);
         final Method[] methods = targetClass.getMethods();
-        methodInfoMap.put("source", targetName + ":" + methodName);
 
+        eventParameter.setSource(targetName + ":" + methodName);
+        eventParameter.setLevel(level);
+        eventParameter.setMessage(message);
         for (final Method method : methods) {
             if (method.getName().equals(methodName)) {
                 final Class[] methodParameterTypes = method.getParameterTypes();
                 if (methodParameterTypes.length == arguments.length) {
-                    methodInfoMap.put("name", method.getAnnotation(OpLog.class).name());
-                    methodInfoMap.put("desc", method.getAnnotation(OpLog.class).desc());
-                    methodInfoMap.put("params", StringUtils.join(arguments, ","));
+                    eventParameter.setName(method.getAnnotation(OpLog.class).name());
+                    eventParameter.setDesc(method.getAnnotation(OpLog.class).desc());
+                    eventParameter.setArguments(StringUtils.join(arguments, ","));
                     break;
                 }
             }
         }
-        return methodInfoMap;
+        return eventParameter;
     }
 
     protected String getExceptionStack(final Throwable ex) {
@@ -99,5 +100,41 @@ public class OpLogAspect {
         }
         return stackInfo;
     }
+
+    /**
+     * 事件参数类
+     */
+    @Data
+    public static class EventParameter {
+        /**
+         * 事件来源
+         */
+        private String source;
+        /**
+         * 事件级别
+         */
+        private String level;
+        /**
+         * 事件名称
+         */
+        private String name;
+        /**
+         * 事件说明
+         */
+        private String desc;
+        /**
+         * 事件调用方法参数
+         */
+        private String arguments;
+        /**
+         * 事件信息
+         */
+        private String message;
+        /**
+         * 事件请求url
+         */
+        private String url;
+    }
 }
+
 

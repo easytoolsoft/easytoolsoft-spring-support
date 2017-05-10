@@ -111,8 +111,10 @@ public class LocaleUtils {
     }
 
     /**
-     * @param codePrefixes
-     * @return
+     * 获取指定前辍对应的所有的Message集合
+     *
+     * @param codePrefixes code前辍
+     * @return Map[Key, Value]
      */
     public static Map<String, String> getMessages(String... codePrefixes) {
         final Locale locale = LocaleContextHolder.getLocale();

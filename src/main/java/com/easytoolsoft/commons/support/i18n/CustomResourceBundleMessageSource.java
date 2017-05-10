@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
@@ -15,8 +16,18 @@ import org.springframework.context.support.ResourceBundleMessageSource;
  **/
 
 public class CustomResourceBundleMessageSource extends ResourceBundleMessageSource {
+    /**
+     * 获取指定前辍对应的所有的Message集合
+     *
+     * @param locale       @see Locale
+     * @param codePrefixes code前辍
+     * @return Map[Key,Value]
+     */
     public Map<String, String> getMessages(Locale locale, String... codePrefixes) {
         Map<String, String> messagesMap = new HashMap<>(128);
+        if (ArrayUtils.isEmpty(codePrefixes)) {
+            return messagesMap;
+        }
         Set<String> basenames = this.getBasenameSet();
         for (String basename : basenames) {
             ResourceBundle bundle = getResourceBundle(basename, locale);
