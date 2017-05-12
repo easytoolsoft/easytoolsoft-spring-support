@@ -5,16 +5,17 @@ import java.util.Set;
 /**
  * 用户权限服务外观接口
  *
+ * @param <User> 用户基本信息类
  * @author zhiwei.deng
  * @date 2017-03-25
  */
-public interface MembershipFacade {
+public interface MembershipFacade<User> {
 
     /**
      * @param account
      * @return
      */
-    Object getUser(String account);
+    User getUser(String account);
 
     /**
      * @param roleIds
