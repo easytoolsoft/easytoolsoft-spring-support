@@ -59,7 +59,7 @@ public class ErrorController extends BasicErrorController {
         return this.getResponseEntity(request);
     }
 
-    private Map<String, Object> getViewModel(final HttpServletRequest request, final HttpServletResponse response) {
+    protected Map<String, Object> getViewModel(final HttpServletRequest request, final HttpServletResponse response) {
         final HttpStatus status = getStatus(request);
         final Map<String, Object> model = Collections.unmodifiableMap(
             getErrorAttributes(request, isIncludeStackTrace(request, MediaType.TEXT_HTML)));
@@ -68,7 +68,7 @@ public class ErrorController extends BasicErrorController {
         return model;
     }
 
-    private ResponseEntity<Map<String, Object>> getResponseEntity(final HttpServletRequest request) {
+    protected ResponseEntity<Map<String, Object>> getResponseEntity(final HttpServletRequest request) {
         final HttpStatus status = getStatus(request);
         final Map<String, Object> model = getErrorAttributes(request, isIncludeStackTrace(request, MediaType.ALL));
         log.error("ath:{},status:{},trace:{}", model.get("path"), status.value(), model.get("trace"));
